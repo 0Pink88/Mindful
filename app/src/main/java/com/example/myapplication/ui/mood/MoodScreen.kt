@@ -32,6 +32,9 @@ import androidx.navigation.NavController
 import java.time.LocalDate
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 enum class MoodType(val label: String, val emoji: String) {
@@ -50,8 +53,8 @@ data class MoodEntry(
 fun MoodScreen(navController: NavController) {
     val moodHistory = remember {
         mutableStateListOf(
-            MoodEntry("4/3/2026", MoodType.HAPPY),
-            MoodEntry("4/4/2026", MoodType.FRUSTRATED)
+            MoodEntry("04/03/2026", MoodType.HAPPY),
+            MoodEntry("04/04/2026", MoodType.FRUSTRATED)
         )
     }
     var showDialog by remember { mutableStateOf(false) }
@@ -105,7 +108,8 @@ fun MoodScreen(navController: NavController) {
                     MoodType.entries.forEach { mood ->
                         OutlinedButton(
                             onClick = {
-                                val today = LocalDate.now().toString()
+                                val today = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+                                    .format(Date())
 
                                 moodHistory.removeAll { it.date == today }
                                 moodHistory.add(MoodEntry(today, mood))
