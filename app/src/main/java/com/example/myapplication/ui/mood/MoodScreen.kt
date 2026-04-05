@@ -177,7 +177,7 @@ fun CalendarDayCell(
     ) {
         Text(
             text = date.dayOfMonth.toString(),
-            color = Color.White,
+            color = Color.Black,
             modifier = Modifier.align(Alignment.TopStart)
         )
 
