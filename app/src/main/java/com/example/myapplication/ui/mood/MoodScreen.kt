@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.mood
 
+import android.R.attr.navigationIcon
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -12,17 +13,22 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -34,13 +40,15 @@ import java.time.LocalDate
 import java.time.YearMonth
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Icon
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MoodScreen(
-    navController: NavHostController,
-    viewModel: MoodViewModel = viewModel()
+fun MoodScreen(navController: NavHostController, viewModel: MoodViewModel = viewModel()
 ) {
     val currentMonth = YearMonth.now()
     val days = buildCalendarDays(currentMonth)
@@ -49,6 +57,10 @@ fun MoodScreen(
 
     // First initial column that has houses the mood tracker title and log your mood button
     Column(modifier = Modifier.fillMaxSize().background(Color.White).padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        TopAppBar(title = {Text("")}, navigationIcon = { IconButton(onClick = { navController.popBackStack() })  {
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        }})
+
         Text(
             text = "Mood Tracker",
             color = Color.Black,
@@ -173,18 +185,18 @@ fun CalendarDayCell(
             .aspectRatio(1f)
             .border(1.dp, Color.DarkGray)
             .clickable { onClick() }
-            .padding(6.dp)
     ) {
         Text(
             text = date.dayOfMonth.toString(),
             color = Color.Black,
-            modifier = Modifier.align(Alignment.TopStart)
+            fontSize = 12.sp,
+            modifier = Modifier.align(Alignment.TopStart).offset(x = 4.dp, y = 0.2.dp)
         )
 
         if (mood != null) {
             Text(
                 text = mood.emoji,
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier.align(Alignment.Center).offset(y = 6.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
         }
