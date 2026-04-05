@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MindfulFinal"
+rootProject.name = "My Application"
 include(":app")

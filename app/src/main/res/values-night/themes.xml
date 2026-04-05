@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.MindfulFinal" parent="Theme.Material3.DayNight.NoActionBar">
@@ -5,3 +6,8 @@
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
 </resources>
+=======
+<resources>
+    <style name="Theme.MyApplication" parent="android:Theme.Material.NoActionBar" />
+</resources>
+>>>>>>> f9283e0bf6ed7768326a04bf5a46c42106d4dd0e
