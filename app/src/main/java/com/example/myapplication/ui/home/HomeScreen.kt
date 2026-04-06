@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import com.google.firebase.auth.FirebaseAuth
+import com.example.myapplication.ui.auth.AuthViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, authViewModel: AuthViewModel) {
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -42,10 +42,14 @@ fun HomeScreen(navController: NavController) {
         Button(onClick = { navController.navigate("resources") }, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
             Text("Resources")
         }
+        Button(onClick = { navController.navigate("quotes") }, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
+            Text("Daily Quote")
+        }
         Spacer(modifier = Modifier.height(24.dp))
         OutlinedButton(
             onClick = {
-                navController.navigate("login") {
+                authViewModel.logout()
+                navController.navigate("auth") {
                     popUpTo(0) { inclusive = true }
                 }
             },

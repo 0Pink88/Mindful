@@ -12,15 +12,20 @@ import com.example.myapplication.ui.mood.MoodScreen
 import com.example.myapplication.ui.pet.PetScreen
 import com.example.myapplication.ui.goals.GoalsScreen
 import com.example.myapplication.ui.resources.ResourcesScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myapplication.ui.auth.AuthViewModel
+import com.example.myapplication.ui.quotes.QuoteScreen
+
 import com.example.myapplication.ui.text.TextScreen
 
 @Composable
 fun MindfulApp() {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = "auth") {
-        composable("auth") { AuthScreen(navController) }
-        composable("home") { HomeScreen(navController) }
+        composable("auth") { AuthScreen(navController, authViewModel) }
+        composable("home") { HomeScreen(navController, authViewModel) }
         composable("journal") { JournalScreen(navController) }
         composable("text") { TextScreen(navController) }
         composable("forum") { ForumScreen(navController) }
@@ -28,5 +33,6 @@ fun MindfulApp() {
         composable("pet") { PetScreen(navController) }
         composable("goals") { GoalsScreen(navController) }
         composable("resources") { ResourcesScreen(navController) }
+        composable(route = "quotes") {QuoteScreen(navController)}
     }
 }
