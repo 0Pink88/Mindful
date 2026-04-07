@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ForumActivity"
+rootProject.name = "My Application"
 include(":app")
