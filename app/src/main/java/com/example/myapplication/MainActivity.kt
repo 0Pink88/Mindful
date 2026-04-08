@@ -24,8 +24,6 @@ class MainActivity : AppCompatActivity() {
     private var postList = mutableListOf<ForumPost>()
     private lateinit var adapter: ForumAdapter
     private val CHANNEL_ID = "motivational_reminders"
-
-    // Persistence tools
     private lateinit var sharedPreferences: SharedPreferences
     private val gson = Gson()
 
@@ -43,13 +41,25 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("forum_prefs", Context.MODE_PRIVATE)
         createNotificationChannel()
-
-        // 1. Load saved posts before setting up the UI
         loadPosts()
 
-        // 2. Setup Forum UI
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        adapter = ForumAdapter(postList)
+
+        adapter = ForumAdapter(postList) { position ->
+            val post = postList[position]
+
+            if (post.isLiked) {
+                post.likes -= 1
+                post.isLiked = false
+            } else {
+                post.likes += 1
+                post.isLiked = true
+            }
+
+            savePosts() // Make sure the unlike is remembered!
+            adapter.notifyItemChanged(position)
+        }
+
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -60,11 +70,9 @@ class MainActivity : AppCompatActivity() {
             val text = edtMessage.text.toString()
             if (text.isNotEmpty()) {
                 val currentTime = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date())
-                val newPost = ForumPost("You", text, currentTime)
-
+                val newPost = ForumPost("You", text, currentTime, 0)
                 postList.add(newPost)
-                savePosts() // Save to memory immediately
-
+                savePosts()
                 adapter.notifyItemInserted(postList.size - 1)
                 edtMessage.text.clear()
                 recyclerView.scrollToPosition(postList.size - 1)
@@ -73,8 +81,6 @@ class MainActivity : AppCompatActivity() {
 
         sendMotivationalReminder()
     }
-
-    // --- PERSISTENCE LOGIC ---
 
     private fun savePosts() {
         val json = gson.toJson(postList)
@@ -88,8 +94,6 @@ class MainActivity : AppCompatActivity() {
             postList = gson.fromJson(json, type)
         }
     }
-
-    // --- NOTIFICATION LOGIC ---
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
