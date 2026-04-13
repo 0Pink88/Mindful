@@ -55,6 +55,7 @@ fun MoodScreen(navController: NavHostController, viewModel: MoodViewModel = view
 ) {
     val currentMonth = YearMonth.now()
     val days = makeCalendar(currentMonth)
+    val petViewModel: PetViewModel = viewModel()
     var showDialog by remember{ mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
@@ -126,8 +127,11 @@ fun MoodScreen(navController: NavHostController, viewModel: MoodViewModel = view
             MoodDialog(
                 selectedDate = selectedDate,
                 onDismiss = { showDialog = false },
-                onMoodSelected = {mood -> viewModel.logMood(selectedDate, mood)
-                    showDialog = false }
+                onMoodSelected = {mood -> 
+                    viewModel.logMood(selectedDate, mood)
+                    petViewModel.updateFromMood(mood)
+                    showDialog = false 
+                }
             )
         }
     }
