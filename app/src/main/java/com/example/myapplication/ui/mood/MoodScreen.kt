@@ -1,6 +1,5 @@
 package com.example.myapplication.ui.mood
 
-import android.R.attr.navigationIcon
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
