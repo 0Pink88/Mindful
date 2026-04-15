@@ -21,7 +21,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -45,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Icon
+// import com.example.myapplication.ui.pet.PetViewModel
 import kotlinx.coroutines.selects.select
 
 
@@ -55,14 +56,14 @@ fun MoodScreen(navController: NavHostController, viewModel: MoodViewModel = view
 ) {
     val currentMonth = YearMonth.now()
     val days = makeCalendar(currentMonth)
-    val petViewModel: PetViewModel = viewModel()
+   //  val petViewModel: PetViewModel = viewModel()
     var showDialog by remember{ mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
     // First initial column that has houses the mood tracker title and log your mood button
     Column(modifier = Modifier.fillMaxSize().background(Color.White).padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         TopAppBar(title = {Text("")}, navigationIcon = { IconButton(onClick = { navController.popBackStack() })  {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
         }})
 
         Text(
@@ -129,7 +130,7 @@ fun MoodScreen(navController: NavHostController, viewModel: MoodViewModel = view
                 onDismiss = { showDialog = false },
                 onMoodSelected = {mood -> 
                     viewModel.logMood(selectedDate, mood)
-                    petViewModel.updateFromMood(mood)
+                   // petViewModel.updateFromMood(mood)
                     showDialog = false 
                 }
             )
