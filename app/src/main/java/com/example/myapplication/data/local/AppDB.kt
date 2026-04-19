@@ -9,14 +9,14 @@ import com.example.myapplication.data.model.MoodEntry
 @Database(
     entities = [
         MoodEntry::class,
-        // JournalEntry::class
+        JournalEntry::class
     ],
-    version = 1, // change when adding on different features i.e. journalEntry
+    version = 2, // change when adding on different features i.e. journalEntry
     exportSchema = false
 )
 abstract class AppDB : RoomDatabase() {
     abstract fun moodDAO(): MoodDAO
-
+    abstract fun journalDAO(): JournalDAO
     companion object {
         @Volatile
         private var INSTANCE: AppDB? = null

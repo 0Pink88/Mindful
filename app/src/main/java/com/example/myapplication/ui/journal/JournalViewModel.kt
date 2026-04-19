@@ -1,26 +1,51 @@
 package com.example.myapplication.ui.journal
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.example.myapplication.data.local.JournalDAO
 import com.example.myapplication.data.model.JournalEntry
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
-class JournalViewModel : ViewModel() {
+class JournalViewModel(private val journalDAO: JournalDAO) : ViewModel() {
 
-    //list of journal entries
-    //currently this is a temp list, will add json memory next to account for new entries
-    var journalEntries = mutableStateListOf<JournalEntry>(
-        JournalEntry(0, "4/2/2026", "What is gambling in the first place? Gambling is the act of betting on something in hopes of gaining something else. Usually, this means something of high value (i.e money, prizes, etc). This can take the form of betting on card games, sports matches, races, games of chance, and more. Gambling has existed since as far back as 3000 B.C. and there has been evidence of gambling being a staple part of human society all throughout history and the world (The Gambling Clinic 2024). The prospect of gaining a large sum in return for not much work aside from promising some of your current assets sounds very appealing to some. People usually see gambling as something someone can do for some fun with the chance of winning some money along with it, but sadly, there are people who uncontrollably can’t get enough of the rush that winning a bet can give you. When this happens, the person in question has formed an addiction around gambling and it can spiral out of control quickly, damaging and even ruining lives. As per the World Health Organization, having a gambling addiction can sometimes increase someone’s likelihood of dying by suicide by 15 times the average person (WHO 2024). With severe consequences like these, this begs the question of how ethical gambling is in the first place. Like most things, this is a heavily nuanced subject and must be examined from many points of view. Gambling is a multi-faceted aspect of society. It has major effects on an area’s local economy like income from taxes, employment, gambling tourism, and more (The Gambling Clinic 2024). In the US, this nuance is managed by heavily regulating the practice.  What is gambling in the first place? Gambling is the act of betting on something in hopes of gaining something else. Usually, this means something of high value (i.e money, prizes, etc). This can take the form of betting on card games, sports matches, races, games of chance, and more. Gambling has existed since as far back as 3000 B.C. and there has been evidence of gambling being a staple part of human society all throughout history and the world (The Gambling Clinic 2024). The prospect of gaining a large sum in return for not much work aside from promising some of your current assets sounds very appealing to some. People usually see gambling as something someone can do for some fun with the chance of winning some money along with it, but sadly, there are people who uncontrollably can’t get enough of the rush that winning a bet can give you. When this happens, the person in question has formed an addiction around gambling and it can spiral out of control quickly, damaging and even ruining lives. As per the World Health Organization, having a gambling addiction can sometimes increase someone’s likelihood of dying by suicide by 15 times the average person (WHO 2024). With severe consequences like these, this begs the question of how ethical gambling is in the first place. Like most things, this is a heavily nuanced subject and must be examined from many points of view. Gambling is a multi-faceted aspect of society. It has major effects on an area’s local economy like income from taxes, employment, gambling tourism, and more (The Gambling Clinic 2024). In the US, this nuance is managed by heavily regulating the practice. ", true),
-        JournalEntry(1, "4/3/2026", "I am evil!", true),
-        JournalEntry(2, "4/4/2026", "I am super evil!", true),
-        JournalEntry(3, "4/5/2026", "I am not evil!", true),
-        JournalEntry(4, "4/6/2026", "I am evil!", true),
-        JournalEntry(5, "4/7/2026", "I am super evil!", true),
-        JournalEntry(6, "4/8/2026", "I am not evil!", true),
-        JournalEntry(7, "4/9/2026", "I am evil!", true),
-        JournalEntry(8, "4/10/2026", "What is gambling in the first place? Gambling is the act of betting on something in hopes of gaining something else. Usually, this means something of high value (i.e money, prizes, etc). This can take the form of betting on card games, sports matches, races, games of chance, and more. Gambling has existed since as far back as 3000 B.C. and there has been evidence of gambling being a staple part of human society all throughout history and the world (The Gambling Clinic 2024). The prospect of gaining a large sum in return for not much work aside from promising some of your current assets sounds very appealing to some. People usually see gambling as something someone can do for some fun with the chance of winning some money along with it, but sadly, there are people who uncontrollably can’t get enough of the rush that winning a bet can give you. When this happens, the person in question has formed an addiction around gambling and it can spiral out of control quickly, damaging and even ruining lives. As per the World Health Organization, having a gambling addiction can sometimes increase someone’s likelihood of dying by suicide by 15 times the average person (WHO 2024). With severe consequences like these, this begs the question of how ethical gambling is in the first place. Like most things, this is a heavily nuanced subject and must be examined from many points of view. Gambling is a multi-faceted aspect of society. It has major effects on an area’s local economy like income from taxes, employment, gambling tourism, and more (The Gambling Clinic 2024). In the US, this nuance is managed by heavily regulating the practice.  What is gambling in the first place? Gambling is the act of betting on something in hopes of gaining something else. Usually, this means something of high value (i.e money, prizes, etc). This can take the form of betting on card games, sports matches, races, games of chance, and more. Gambling has existed since as far back as 3000 B.C. and there has been evidence of gambling being a staple part of human society all throughout history and the world (The Gambling Clinic 2024). The prospect of gaining a large sum in return for not much work aside from promising some of your current assets sounds very appealing to some. People usually see gambling as something someone can do for some fun with the chance of winning some money along with it, but sadly, there are people who uncontrollably can’t get enough of the rush that winning a bet can give you. When this happens, the person in question has formed an addiction around gambling and it can spiral out of control quickly, damaging and even ruining lives. As per the World Health Organization, having a gambling addiction can sometimes increase someone’s likelihood of dying by suicide by 15 times the average person (WHO 2024). With severe consequences like these, this begs the question of how ethical gambling is in the first place. Like most things, this is a heavily nuanced subject and must be examined from many points of view. Gambling is a multi-faceted aspect of society. It has major effects on an area’s local economy like income from taxes, employment, gambling tourism, and more (The Gambling Clinic 2024). In the US, this nuance is managed by heavily regulating the practice. ", true)
+    //Pull all entries from table and place into journalEntries
+    val journalEntries: StateFlow<List<JournalEntry>> = journalDAO.getAllEntries().stateIn( // Live mood entry updates
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
     )
 
-    fun CreateEntry(newIndex: Int, currentDate: String) {
-        journalEntries.add(JournalEntry(newIndex, currentDate, "Hello Jake!", false))
+    //create default entry
+    fun CreateEntry(date: LocalDate?) {
+        if (date == null) return
+        viewModelScope.launch {
+            journalDAO.insertEntry(JournalEntry(date = date.toString(), content = "", complete = false))
+        }
+    }
+
+    fun SaveEntry(date: LocalDate?, savedContent: String) {
+        if (savedContent == null) return
+        viewModelScope.launch {
+            //JournalDAO.insertEntry(JournalEntry(date = date.toString(), content = savedContent, complete = false))        //Will complete later
+                                                                                                                            //must add UpdateEntry fun and integrate into JournalScreen
+        }
+    }
+}
+
+//factory to give context for db
+class JournalViewModelFactory(
+    private val journalDAO: JournalDAO
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(JournalViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return JournalViewModel(journalDAO) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
