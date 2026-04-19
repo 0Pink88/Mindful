@@ -19,8 +19,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,45 +36,61 @@ import androidx.navigation.NavController
 fun GoalsScreen(navController: NavController, viewModel: GoalsViewModel = viewModel()) {
     val goals = viewModel.goals
     val completedGoals = goals.count { it.isCompleted }
-    Column(
-        modifier = Modifier.fillMaxSize().background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        GoalIndicatorBar(
-            completedGoals = viewModel.completedGoals,
-            totalGoals = goals.size
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        goals.forEach { goal -> Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = goal.isCompleted,
-                onCheckedChange = {
-                    viewModel.toggleGoal(goal.id)
-                }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {IconButton(onClick = {navController.popBackStack()}) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }},
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFEDE7F6))
             )
-            Text(text = goal.title)
-        } }
+        }
+    ) { innerPadding -> Column(
+            modifier = Modifier.fillMaxSize().padding(innerPadding).background(Color.White).padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Spacer(modifier = Modifier.height(48.dp)) // changes height of progress bar and goals
+            GoalIndicatorBar(
+                completedGoals = viewModel.completedGoals,
+                totalGoals = goals.size
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            goals.forEach { goal -> Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = goal.isCompleted,
+                    onCheckedChange = {
+                        viewModel.toggleGoal(goal.id)
+                    }
+                )
+                Text(text = goal.title)
+            } }
+        }
     }
 }
 
 @Composable
 fun GoalIndicatorBar(completedGoals: Int, totalGoals: Int, modifier: Modifier = Modifier) {
     val progress = if (totalGoals > 0) completedGoals / totalGoals.toFloat() else 0f
+    val percentage = (progress * 100).toInt()
     Box(
-        modifier = modifier.size(120.dp), contentAlignment = Alignment.Center
+        modifier = modifier.size(250.dp), contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            progress = {progress},
+            progress = { progress },
             modifier = Modifier.fillMaxSize(),
-            strokeWidth = 10.dp
+            strokeWidth = 14.dp
         )
         Text(
-            text = "$completedGoals/$totalGoals",
-            style = MaterialTheme.typography.titleMedium
+            text = "$percentage%",
+            style = MaterialTheme.typography.titleLarge
         )
     }
 
