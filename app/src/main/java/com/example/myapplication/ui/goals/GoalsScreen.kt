@@ -22,11 +22,12 @@ import androidx.navigation.NavController
 @Composable
 fun GoalsScreen(navController: NavController) {
     Column(
-        modifier = Modifier.fillMaxSize().background(Color.White).padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        TopAppBar(title = {Text("")}, navigationIcon = { IconButton(onClick = {navController.popBackStack()})  {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-        }})
-
+        modifier = Modifier.fillMaxSize().background(Color.White)
+    ) {
+        TopAppBar(title = { Text("") }, navigationIcon = {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            }
+        })
     }
 }
