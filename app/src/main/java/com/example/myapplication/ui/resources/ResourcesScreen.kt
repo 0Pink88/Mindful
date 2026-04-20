@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -71,9 +72,6 @@ fun ResourcesScreen(navController: NavController) {
     val allResourceEntries by viewModel.ResourceList.collectAsState()
     var selectedResourceEntry by remember { mutableStateOf<ResourceEntry?>(null)}       //USE THIS FOR EXPANDING TEXT
 
-    val backgroundColor = Color(0xFFF7F2FA)     //From GoalsScreen
-    val borderColor = Color.LightGray
-
     var query by remember { mutableStateOf("")}
 
     Scaffold(
@@ -104,51 +102,11 @@ fun ResourcesScreen(navController: NavController) {
         //if db isnt empty output UI, db should never be empty
         Column(modifier = Modifier.padding(15.dp)) {
             if (allResourceEntries.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier.padding(innerPadding),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {  items(allResourceEntries) { ResourceEntry ->
-                    //display of each Resource Entry Card
-                    Card(
-                        onClick = { },
-                        colors = CardDefaults.cardColors(containerColor = backgroundColor),     //color, shape, and elevation modifications from goals page
-                        border = BorderStroke(1.dp, borderColor),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly) {
-                            Image(painterResource(R.drawable.person),
-                                contentDescription = null,
-                                modifier = Modifier.size(165.dp))
-
-                            Spacer(modifier = Modifier.width(20.dp))
-
-                            Column(modifier = Modifier.fillMaxWidth().fillMaxSize()) {
-
-                                Text(
-                                    ResourceEntry.name,
-                                    modifier = Modifier
-                                        .fillMaxWidth(),)
-
-                                Spacer(modifier = Modifier.size(3.dp))
-
-                                Text(
-                                    ResourceEntry.phoneNum,
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    fontSize = 12.sp)
-
-                                Spacer(modifier = Modifier.padding(4.dp))
-
-                                ShortenText(ResourceEntry.description, 100)
-                            }
-                        }
-                    }
+                if (query == "") {
+                    UnfilteredList(allResourceEntries, innerPadding)
                 }
+                else {
+                    FilteredList(allResourceEntries, innerPadding, query)
                 }
             }
         }
@@ -178,4 +136,111 @@ fun ShortenText(descText: String, maxChars: Int) {
 
     //display text
     Text(text = displayText, fontSize = 14.sp)
+}
+
+@Composable
+fun UnfilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: PaddingValues) {
+
+    val backgroundColor = Color(0xFFF7F2FA)     //From GoalsScreen
+    val borderColor = Color.LightGray
+
+    LazyColumn(
+        modifier = Modifier.padding(innerPadding),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {  items(allResourceEntries) { ResourceEntry ->
+        //display of each Resource Entry Card
+        Card(
+            onClick = { },
+            colors = CardDefaults.cardColors(containerColor = backgroundColor),     //color, shape, and elevation modifications from goals page
+            border = BorderStroke(1.dp, borderColor),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly) {
+                Image(painterResource(R.drawable.person),
+                    contentDescription = null,
+                    modifier = Modifier.size(165.dp))
+
+                Spacer(modifier = Modifier.width(20.dp))
+
+                Column(modifier = Modifier.fillMaxWidth().fillMaxSize()) {
+
+                    Text(
+                        ResourceEntry.name,
+                        modifier = Modifier
+                            .fillMaxWidth(),)
+
+                    Spacer(modifier = Modifier.size(3.dp))
+
+                    Text(
+                        ResourceEntry.phoneNum,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        fontSize = 12.sp)
+
+                    Spacer(modifier = Modifier.padding(4.dp))
+
+                    ShortenText(ResourceEntry.description, 100)
+                }
+            }
+        }
+    }
+    }
+}
+
+@Composable
+fun FilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: PaddingValues, query: String) {
+    val backgroundColor = Color(0xFFF7F2FA)     //From GoalsScreen
+    val borderColor = Color.LightGray
+
+    LazyColumn(
+        modifier = Modifier.padding(innerPadding),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {  items(allResourceEntries) { ResourceEntry ->
+        //display of each Resource Entry Card
+        Card(
+            onClick = { },
+            colors = CardDefaults.cardColors(containerColor = backgroundColor),     //color, shape, and elevation modifications from goals page
+            border = BorderStroke(1.dp, borderColor),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly) {
+                Image(painterResource(R.drawable.person),
+                    contentDescription = null,
+                    modifier = Modifier.size(165.dp))
+
+                Spacer(modifier = Modifier.width(20.dp))
+
+                Column(modifier = Modifier.fillMaxWidth().fillMaxSize()) {
+
+                    Text(
+                        ResourceEntry.name,
+                        modifier = Modifier
+                            .fillMaxWidth(),)
+
+                    Spacer(modifier = Modifier.size(3.dp))
+
+                    Text(
+                        ResourceEntry.phoneNum,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        fontSize = 12.sp)
+
+                    Spacer(modifier = Modifier.padding(4.dp))
+
+                    ShortenText(ResourceEntry.description, 100)
+                }
+            }
+        }
+    }
+    }
 }
