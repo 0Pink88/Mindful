@@ -64,7 +64,7 @@ fun ResourcesScreen(navController: NavController) {
     //pulls all entries in table
     //create selectedEntry variable to use and modify
     val allResourceEntries by viewModel.ResourceList.collectAsState()
-    var selectedResourceEntry by remember { mutableStateOf<ResourceEntry?>(null)}
+    var selectedResourceEntry by remember { mutableStateOf<ResourceEntry?>(null)}       //USE THIS FOR EXPANDING TEXT
 
     val backgroundColor = Color(0xFFF7F2FA)     //From GoalsScreen
     val borderColor = Color.LightGray
@@ -80,12 +80,6 @@ fun ResourcesScreen(navController: NavController) {
                         navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                },
-                //generate demo entries
-                actions = {
-                    IconButton( onClick = {  } ) {
-                        Icon(Icons.Default.Build, contentDescription = "Demo")
-                    }
                 }
             )
         }
@@ -96,14 +90,16 @@ fun ResourcesScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {  items(allResourceEntries) { ResourceEntry ->
                 Card(
-                    /*modifier = Modifier.fillMaxWidth().padding(10.dp) */
                     onClick = { },
                     colors = CardDefaults.cardColors(containerColor = backgroundColor),     //color, shape, and elevation modifications from goals page
                     border = BorderStroke(1.dp, borderColor),
                     shape = RoundedCornerShape(12.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Row(modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly) {
 
                         Image(painterResource(R.drawable.book_clipart),
@@ -113,17 +109,24 @@ fun ResourcesScreen(navController: NavController) {
                         Spacer(modifier = Modifier.width(20.dp))
 
                         Column(modifier = Modifier.fillMaxWidth().fillMaxSize()) {
+
                             Text(
                                 ResourceEntry.name,
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth(),
                                 textAlign = TextAlign.Justify)
+
                             Spacer(modifier = Modifier.size(3.dp))
+
                             Text(
                                 ResourceEntry.phoneNum,
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth(),
                                 textAlign = TextAlign.Justify,
                                 fontSize = 12.sp)
+
                             Spacer(modifier = Modifier.padding(4.dp))
+
                             ShortenText(ResourceEntry.description, 100)
                         }
                     }
