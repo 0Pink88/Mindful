@@ -49,6 +49,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myapplication.R
@@ -71,7 +72,6 @@ fun ResourcesScreen(navController: NavController) {
     //pulls all entries in table
     //create selectedEntry variable to use and modify
     val allResourceEntries by viewModel.ResourceList.collectAsState()
-    var selectedResourceEntry by remember { mutableStateOf<ResourceEntry?>(null)}       //USE THIS FOR EXPANDING TEXT
 
     val query by viewModel.query.collectAsState()
 
@@ -149,6 +149,8 @@ fun UnfilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: Paddin
 
     val backgroundColor = Color(0xFFF7F2FA)     //From GoalsScreen
     val borderColor = Color.LightGray
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedEntry by remember { mutableStateOf<ResourceEntry?>(null)}
 
     LazyColumn(
         modifier = Modifier.padding(innerPadding),
@@ -156,7 +158,8 @@ fun UnfilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: Paddin
     ) {  items(allResourceEntries) { resourceEntry ->
         //display of each Resource Entry Card
         Card(
-            onClick = { },
+            onClick = { showDialog = true
+                        selectedEntry = resourceEntry},
             colors = CardDefaults.cardColors(containerColor = backgroundColor),     //color, shape, and elevation modifications from goals page
             border = BorderStroke(1.dp, borderColor),
             shape = RoundedCornerShape(12.dp),
@@ -165,7 +168,7 @@ fun UnfilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: Paddin
             Row(
                 modifier = Modifier
                     .padding(8.dp)
-                    .fillMaxWidth(),
+                    .fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceEvenly) {
                 Image(painterResource(R.drawable.person),
                     contentDescription = null,
@@ -196,6 +199,13 @@ fun UnfilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: Paddin
         }
     }
     }
+
+    //checks showDialog, passes selectedEntry as entry
+    if (showDialog == true) {
+        selectedEntry?.let { entry ->
+            InfoDialogBox(entry, showDialog, onDismiss = { showDialog = false })
+        }
+    }
 }
 
 @Composable
@@ -204,6 +214,8 @@ fun FilteredList(innerPadding: PaddingValues, viewModel: ResourcesViewModel) {
     //redeclaration of viewModel for new function
     val backgroundColor = Color(0xFFF7F2FA)     //From GoalsScreen
     val borderColor = Color.LightGray
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedEntry by remember { mutableStateOf<ResourceEntry?>(null)}
 
     //Only creates filtered list if needed, updates as query changes
     val FilteredResourceEntries by viewModel.FilteredResourceList.collectAsState()
@@ -216,7 +228,8 @@ fun FilteredList(innerPadding: PaddingValues, viewModel: ResourcesViewModel) {
     ) {  items(FilteredResourceEntries) { resourceEntry ->
         //display of each Resource Entry Card
         Card(
-            onClick = { },
+            onClick = { showDialog = true
+                        selectedEntry = resourceEntry},
             colors = CardDefaults.cardColors(containerColor = backgroundColor),     //color, shape, and elevation modifications from goals page
             border = BorderStroke(1.dp, borderColor),
             shape = RoundedCornerShape(12.dp),
@@ -255,5 +268,42 @@ fun FilteredList(innerPadding: PaddingValues, viewModel: ResourcesViewModel) {
             }
         }
     }
+    }
+    //checks showDialog, passes selectedEntry as entry
+    if (showDialog == true) {
+        selectedEntry?.let { entry ->
+            InfoDialogBox(entry, showDialog, onDismiss = { showDialog = false })
+        }
+    }
+}
+
+//Dialog pop-up to display more detailed information
+@Composable
+fun InfoDialogBox(resourceEntry: ResourceEntry, showDialog: Boolean, onDismiss: () -> Unit) {
+    if (showDialog) {
+        Dialog( onDismissRequest = { onDismiss() }) {
+            Column() {
+                Text(
+                    resourceEntry.name,
+                    modifier = Modifier
+                        .fillMaxWidth(),)
+
+                Spacer(modifier = Modifier.size(3.dp))
+
+                Text(
+                    resourceEntry.phoneNum,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    fontSize = 12.sp)
+
+                Spacer(modifier = Modifier.padding(4.dp))
+
+                Text(
+                    resourceEntry.description,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    fontSize = 14.sp)
+            }
+        }
     }
 }
