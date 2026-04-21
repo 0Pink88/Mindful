@@ -72,7 +72,7 @@ fun ResourcesScreen(navController: NavController) {
     val allResourceEntries by viewModel.ResourceList.collectAsState()
     var selectedResourceEntry by remember { mutableStateOf<ResourceEntry?>(null)}       //USE THIS FOR EXPANDING TEXT
 
-    var query by remember { mutableStateOf("")}
+    val query by viewModel.query.collectAsState()
 
     Scaffold(
         //top bar to hold back button
@@ -85,9 +85,10 @@ fun ResourcesScreen(navController: NavController) {
                     }
                 },
                 title = {
+                    //search bar
                     Box(modifier = Modifier.fillMaxWidth().offset(x = -23.dp), contentAlignment = Alignment.Center) {
                         OutlinedTextField( value = query,
-                            onValueChange = {query = it},
+                            onValueChange = { viewModel.updateSearchQuery(it)},
                             placeholder = { Text("Search... ") },
                             textStyle = TextStyle(fontSize = 14.sp),
                             shape = CircleShape, singleLine = true,
@@ -99,14 +100,18 @@ fun ResourcesScreen(navController: NavController) {
             )
         }
     ) { innerPadding ->
-        //if db isnt empty output UI, db should never be empty
+        //if db isn't empty output UI, db should never be empty
         Column(modifier = Modifier.padding(15.dp)) {
+            //checks if Resource table is empty
             if (allResourceEntries.isNotEmpty()) {
+                //checks if search has been changed
                 if (query == "") {
+                    //if no change, display full list
                     UnfilteredList(allResourceEntries, innerPadding)
                 }
                 else {
-                    FilteredList(allResourceEntries, innerPadding, query)
+                    //if change, display list with searched keywords
+                    FilteredList(innerPadding, viewModel)
                 }
             }
         }
@@ -147,7 +152,7 @@ fun UnfilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: Paddin
     LazyColumn(
         modifier = Modifier.padding(innerPadding),
         verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {  items(allResourceEntries) { ResourceEntry ->
+    ) {  items(allResourceEntries) { resourceEntry ->
         //display of each Resource Entry Card
         Card(
             onClick = { },
@@ -170,21 +175,21 @@ fun UnfilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: Paddin
                 Column(modifier = Modifier.fillMaxWidth().fillMaxSize()) {
 
                     Text(
-                        ResourceEntry.name,
+                        resourceEntry.name,
                         modifier = Modifier
                             .fillMaxWidth(),)
 
                     Spacer(modifier = Modifier.size(3.dp))
 
                     Text(
-                        ResourceEntry.phoneNum,
+                        resourceEntry.phoneNum,
                         modifier = Modifier
                             .fillMaxWidth(),
                         fontSize = 12.sp)
 
                     Spacer(modifier = Modifier.padding(4.dp))
 
-                    ShortenText(ResourceEntry.description, 100)
+                    ShortenText(resourceEntry.description, 100)
                 }
             }
         }
@@ -193,14 +198,21 @@ fun UnfilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: Paddin
 }
 
 @Composable
-fun FilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: PaddingValues, query: String) {
+fun FilteredList(innerPadding: PaddingValues, viewModel: ResourcesViewModel) {
+
+    //redeclaration of viewModel for new function
     val backgroundColor = Color(0xFFF7F2FA)     //From GoalsScreen
     val borderColor = Color.LightGray
 
+    //Only creates filtered list if needed, updates as query changes
+    val FilteredResourceEntries by viewModel.FilteredResourceList.collectAsState()
+
+    //pulls all entries in table
+    //create selectedEntry variable to use and modify
     LazyColumn(
         modifier = Modifier.padding(innerPadding),
         verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {  items(allResourceEntries) { ResourceEntry ->
+    ) {  items(FilteredResourceEntries) { resourceEntry ->
         //display of each Resource Entry Card
         Card(
             onClick = { },
@@ -223,21 +235,21 @@ fun FilteredList(allResourceEntries: List<ResourceEntry>, innerPadding: PaddingV
                 Column(modifier = Modifier.fillMaxWidth().fillMaxSize()) {
 
                     Text(
-                        ResourceEntry.name,
+                        resourceEntry.name,
                         modifier = Modifier
                             .fillMaxWidth(),)
 
                     Spacer(modifier = Modifier.size(3.dp))
 
                     Text(
-                        ResourceEntry.phoneNum,
+                        resourceEntry.phoneNum,
                         modifier = Modifier
                             .fillMaxWidth(),
                         fontSize = 12.sp)
 
                     Spacer(modifier = Modifier.padding(4.dp))
 
-                    ShortenText(ResourceEntry.description, 100)
+                    ShortenText(resourceEntry.description, 100)
                 }
             }
         }

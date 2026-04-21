@@ -13,11 +13,11 @@ interface ResourcesDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE) //replace if one exists
     suspend fun insertResource(entry: ResourceEntry)
 
-    @Query("SELECT * FROM resources WHERE name = :name")  //finds resource that matches passed date
-    suspend fun getResourceByName(name: String): ResourceEntry?
+    @Query("SELECT * FROM resources WHERE LOWER(name) LIKE '%' || LOWER(:input) || '%' OR LOWER(description) LIKE '%' || LOWER(:input) || '%'")  //finds resource that matches passed partial input
+    fun getResourceByInput(input: String): Flow<List<ResourceEntry>>                                                                            //Purposefully does not pass input directly because of security risks to db
 
     @Query("SELECT * FROM resources") //pulls entire table
-    fun getAllResources(): Flow<List<ResourceEntry>>
+    fun getAllResources(): Flow<List<ResourceEntry>>                                //currently trying to determine if I need to change query call
 
     @Query("DELETE FROM resources")   //deletes table
     suspend fun deleteAll()
