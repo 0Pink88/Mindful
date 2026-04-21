@@ -61,9 +61,9 @@ fun NewNavScreen(navController: NavController) {
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate("forum") },
+                    onClick = { navController.navigate("resources") },
                     icon = { Icon(Icons.Filled.ChatBubble, contentDescription = null) },
-                    label = { Text("Forum") }
+                    label = { Text("Resources") }
                 )
             }
         }
