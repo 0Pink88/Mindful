@@ -15,7 +15,7 @@ import com.example.myapplication.ui.resources.ResourcesScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.ui.auth.AuthViewModel
 import com.example.myapplication.ui.quotes.QuoteScreen
-
+import com.example.myapplication.ui.newnav.NewNavScreen
 import com.example.myapplication.ui.text.TextScreen
 
 @Composable
@@ -34,5 +34,6 @@ fun MindfulApp() {
         composable("goals") { GoalsScreen(navController) }
         composable("resources") { ResourcesScreen(navController) }
         composable(route = "quotes") {QuoteScreen(navController)}
+        composable("newnav") { NewNavScreen(navController) }
     }
 }

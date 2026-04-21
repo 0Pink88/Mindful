@@ -45,6 +45,9 @@ fun HomeScreen(navController: NavController, authViewModel: AuthViewModel) {
         Button(onClick = { navController.navigate("quotes") }, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
             Text("Daily Quote")
         }
+        Button(onClick = { navController.navigate("newnav") }, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
+            Text("New Nav")
+        }
         Spacer(modifier = Modifier.height(24.dp))
         OutlinedButton(
             onClick = {
