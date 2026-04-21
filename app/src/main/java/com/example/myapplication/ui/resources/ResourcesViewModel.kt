@@ -1,12 +1,16 @@
 package com.example.myapplication.ui.resources
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.local.ResourcesDAO
 import com.example.myapplication.data.model.ResourceEntry
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -19,9 +23,29 @@ class ResourcesViewModel(private val resourceDAO: ResourcesDAO) : ViewModel() {
         initialValue = emptyList()
     )
 
+    //modifiable query value
+    val mutableQuery = MutableStateFlow("")
+    val query: StateFlow<String> = mutableQuery
+
+    //updates search query with new search query
+    fun updateSearchQuery(newQuery: String) {
+        mutableQuery.value = newQuery
+    }
+
+    //declare FilteredResource list like regular ResourceList, except update base query whenever search query changes
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val FilteredResourceList: StateFlow<List<ResourceEntry>> = mutableQuery.flatMapLatest { query ->
+        resourceDAO.getResourceByInput(query)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
     //do this when application is started
     init {
         CreateDemoResources()
+        Log.d("Resources DB Load", "Loaded Demo Entries into DB")
     }
 
     //If no entries exist, create demo entries
